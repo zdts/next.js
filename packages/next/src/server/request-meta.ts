@@ -4,6 +4,8 @@ import type { ParsedUrlQuery } from 'querystring'
 import type { UrlWithParsedQuery } from 'url'
 import type { BaseNextRequest } from './base-http'
 import type { CloneableBody } from './body-streams'
+import type { FetchEvent } from './lib/metrics/fetch'
+
 import { RouteMatch } from './future/route-matches/route-match'
 
 // FIXME: (wyattjoh) this is a temporary solution to allow us to pass data between bundled modules
@@ -39,6 +41,11 @@ export interface RequestMeta {
   _nextMatch?: RouteMatch
   _nextIncrementalCache?: any
   _nextMinimalMode?: boolean
+
+  /**
+   * The fetch metrics for the given request.
+   */
+  fetchMetrics?: ReadonlyArray<FetchEvent>
 }
 
 export function getRequestMeta(
@@ -53,7 +60,7 @@ export function getRequestMeta<K extends keyof RequestMeta>(
   req: NextIncomingMessage,
   key?: K
 ): RequestMeta | RequestMeta[K] {
-  const meta = req[NEXT_REQUEST_META] || {}
+  const meta = req[NEXT_REQUEST_META] ?? {}
   return typeof key === 'string' ? meta[key] : meta
 }
 

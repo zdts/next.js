@@ -1,15 +1,17 @@
-import type { StaticGenerationAsyncStorage } from '../../client/components/static-generation-async-storage'
+import type {
+  StaticGenerationAsyncStorage,
+  StaticGenerationStore,
+} from '../../client/components/static-generation-async-storage'
 import type * as ServerHooks from '../../client/components/hooks-server-context'
 
 import { AppRenderSpan } from './trace/constants'
 import { getTracer, SpanKind } from './trace/tracer'
 import { CACHE_ONE_YEAR } from '../../lib/constants'
+import { recordFetchEvent } from './metrics/fetch'
 
 const isEdgeRuntime = process.env.NEXT_RUNTIME === 'edge'
 
-export function addImplicitTags(
-  staticGenerationStore: ReturnType<StaticGenerationAsyncStorage['getStore']>
-) {
+export function addImplicitTags(staticGenerationStore: StaticGenerationStore) {
   const newTags: string[] = []
   const pathname = staticGenerationStore?.originalPathname
   if (!pathname) {
@@ -24,44 +26,6 @@ export function addImplicitTags(
   }
   newTags.push(pathname)
   return newTags
-}
-
-function trackFetchMetric(
-  staticGenerationStore: ReturnType<StaticGenerationAsyncStorage['getStore']>,
-  ctx: {
-    url: string
-    status: number
-    method: string
-    cacheReason: string
-    cacheStatus: 'hit' | 'miss'
-    start: number
-  }
-) {
-  if (!staticGenerationStore) return
-  if (!staticGenerationStore.fetchMetrics) {
-    staticGenerationStore.fetchMetrics = []
-  }
-  const dedupeFields = ['url', 'status', 'method']
-
-  // don't add metric if one already exists for the fetch
-  if (
-    staticGenerationStore.fetchMetrics.some((metric) => {
-      return dedupeFields.every(
-        (field) => (metric as any)[field] === (ctx as any)[field]
-      )
-    })
-  ) {
-    return
-  }
-  staticGenerationStore.fetchMetrics.push({
-    url: ctx.url,
-    cacheStatus: ctx.cacheStatus,
-    status: ctx.status,
-    method: ctx.method,
-    start: ctx.start,
-    end: Date.now(),
-    idx: staticGenerationStore.nextFetchId || 0,
-  })
 }
 
 // we patch fetch to collect cache information used for
@@ -332,8 +296,8 @@ export function patchFetch({
           }
         }
 
-        const fetchIdx = staticGenerationStore.nextFetchId ?? 1
-        staticGenerationStore.nextFetchId = fetchIdx + 1
+        const fetchID = staticGenerationStore.nextFetchID ?? 1
+        staticGenerationStore.nextFetchID = fetchID + 1
 
         const normalizedRevalidate =
           typeof revalidate !== 'number' ? CACHE_ONE_YEAR : revalidate
@@ -342,20 +306,21 @@ export function patchFetch({
           // add metadata to init without editing the original
           const clonedInit = {
             ...init,
-            next: { ...init?.next, fetchType: 'origin', fetchIdx },
+            next: { ...init?.next, fetchType: 'origin', fetchIdx: fetchID },
           }
 
           return originFetch(input, clonedInit).then(async (res) => {
             if (!isStale) {
-              trackFetchMetric(staticGenerationStore, {
+              recordFetchEvent(staticGenerationStore, {
+                id: fetchID,
                 start: fetchStart,
                 url: fetchUrl,
-                cacheReason,
-                cacheStatus: 'miss',
+                cache: { reason: cacheReason, status: 'miss' },
                 status: res.status,
                 method: clonedInit.method || 'GET',
               })
             }
+
             if (
               res.status === 200 &&
               staticGenerationStore.incrementalCache &&
@@ -380,7 +345,7 @@ export function patchFetch({
                   revalidate,
                   true,
                   fetchUrl,
-                  fetchIdx
+                  fetchID
                 )
               } catch (err) {
                 console.warn(`Failed to set fetch cache`, input, err)
@@ -403,7 +368,7 @@ export function patchFetch({
                 true,
                 revalidate,
                 fetchUrl,
-                fetchIdx
+                fetchID
               )
 
           if (entry?.value && entry.value.kind === 'FETCH') {
@@ -439,7 +404,7 @@ export function patchFetch({
                   revalidate,
                   true,
                   fetchUrl,
-                  fetchIdx
+                  fetchID
                 )
               }
 
@@ -454,11 +419,14 @@ export function patchFetch({
                 decodedBody = Buffer.from(resData.body, 'base64').subarray()
               }
 
-              trackFetchMetric(staticGenerationStore, {
+              recordFetchEvent(staticGenerationStore, {
+                id: fetchID,
                 start: fetchStart,
                 url: fetchUrl,
-                cacheReason,
-                cacheStatus: 'hit',
+                cache: {
+                  reason: cacheReason,
+                  status: 'hit',
+                },
                 status: resData.status || 200,
                 method: init?.method || 'GET',
               })

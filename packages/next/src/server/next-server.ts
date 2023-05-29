@@ -1703,7 +1703,7 @@ export default class NextNodeServer extends BaseServer {
             return
           }
           const reqEnd = Date.now()
-          const fetchMetrics = (normalizedReq as any).fetchMetrics || []
+          const fetchMetrics = getRequestMeta(normalizedReq, 'fetchMetrics')
           const reqDuration = reqEnd - reqStart
 
           const getDurationStr = (duration: number) => {
@@ -1719,7 +1719,7 @@ export default class NextNodeServer extends BaseServer {
             return durationStr
           }
 
-          if (Array.isArray(fetchMetrics) && fetchMetrics.length) {
+          if (fetchMetrics) {
             process.stdout.write('\n')
             process.stdout.write(
               `-  ${chalk.grey('┌')} ${chalk.cyan(req.method || 'GET')} ${
@@ -1752,14 +1752,15 @@ export default class NextNodeServer extends BaseServer {
             for (let i = 0; i < fetchMetrics.length; i++) {
               const metric = fetchMetrics[i]
               const lastItem = i === fetchMetrics.length - 1
-              let cacheStatus = metric.cacheStatus
               const duration = metric.end - metric.start
 
-              if (cacheStatus === 'hit') {
+              let cacheStatus: string
+              if (metric.cache.status === 'hit') {
                 cacheStatus = chalk.green('HIT')
               } else {
                 cacheStatus = chalk.yellow('MISS')
               }
+
               let url = metric.url
 
               if (url.length > 48) {

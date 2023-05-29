@@ -1,5 +1,7 @@
 import type { AsyncLocalStorage } from 'async_hooks'
 import type { IncrementalCache } from '../../server/lib/incremental-cache'
+import type { FetchEvent } from '../../server/lib/metrics/fetch'
+
 import { createAsyncLocalStorage } from './async-local-storage'
 
 export interface StaticGenerationStore {
@@ -28,21 +30,17 @@ export interface StaticGenerationStore {
   dynamicUsageDescription?: string
   dynamicUsageStack?: string
 
-  nextFetchId?: number
+  nextFetchID?: number
   pathWasRevalidated?: boolean
 
   tags?: string[]
 
   revalidatedTags?: string[]
-  fetchMetrics?: Array<{
-    url: string
-    idx: number
-    end: number
-    start: number
-    method: string
-    status: number
-    cacheStatus: 'hit' | 'miss'
-  }>
+
+  /**
+   * The metrics for each fetch event performed for a given request.
+   */
+  fetchMetrics?: FetchEvent[]
 }
 
 export type StaticGenerationAsyncStorage =
