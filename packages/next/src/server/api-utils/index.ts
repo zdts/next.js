@@ -83,6 +83,7 @@ export function checkIsOnDemandRevalidate(
   isOnDemandRevalidate: boolean
   revalidateOnlyGenerated: boolean
 } {
+  console.log('checking is on demand revalidate')
   const headers = HeadersAdapter.from(req.headers)
 
   const previewModeId = headers.get(PRERENDER_REVALIDATE_HEADER)

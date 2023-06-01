@@ -1,14 +1,22 @@
 import React from 'react'
-import { draftMode } from 'next/headers'
+import { cookies, draftMode } from 'next/headers'
 
 export default function Page() {
   const { isEnabled } = draftMode()
+  let data: string | undefined
+  if (isEnabled) {
+    const c = cookies()
+    data = c.get('foo')?.value
+  }
 
   return (
     <>
       <h1>Draft Mode Test</h1>
       <p>
         Random: <em id="rand">{Math.random()}</em>
+      </p>
+      <p>
+        Data: <em id="data">{data}</em>
       </p>
       <p>
         State: <strong id="mode">{isEnabled ? 'ENABLED' : 'DISABLED'}</strong>

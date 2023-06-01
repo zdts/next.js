@@ -11,6 +11,7 @@ export class DraftMode {
     this._provider = provider
   }
   get isEnabled() {
+    console.log('invoked draftMode().isEnabled')
     return this._provider.isEnabled
   }
   public enable() {

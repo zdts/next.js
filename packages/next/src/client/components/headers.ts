@@ -50,6 +50,7 @@ export function cookies() {
 }
 
 export function draftMode() {
+  console.log('invoked draftMode()')
   const requestStore = requestAsyncStorage.getStore()
   if (!requestStore) {
     throw new Error(

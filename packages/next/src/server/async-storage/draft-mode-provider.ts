@@ -29,6 +29,7 @@ export class DraftModeProvider {
     cookies: ReadonlyRequestCookies,
     mutableCookies: ResponseCookies
   ) {
+    console.log('constructed draft mode provider')
     // The logic for draftMode() is very similar to tryGetPreviewData()
     // but Draft Mode does not have any data associated with it.
     const isOnDemandRevalidate =

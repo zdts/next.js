@@ -50,6 +50,7 @@ export class RequestCookiesAdapter {
 const SYMBOL_MODIFY_COOKIE_VALUES = Symbol.for('next.mutated.cookies')
 
 function getModifiedCookieValues(cookies: ResponseCookies): ResponseCookie[] {
+  console.log('get modified cookie values')
   const modified: ResponseCookie[] | undefined = (cookies as unknown as any)[
     SYMBOL_MODIFY_COOKIE_VALUES
   ]
@@ -64,6 +65,7 @@ export function appendMutableCookies(
   headers: Headers,
   mutableCookies: ResponseCookies
 ): boolean {
+  console.log('appending mutable cookies')
   const modifiedCookieValues = getModifiedCookieValues(mutableCookies)
   if (modifiedCookieValues.length === 0) {
     return false
@@ -97,6 +99,7 @@ export class MutableRequestCookiesAdapter {
     cookies: RequestCookies,
     res: ServerResponse | BaseNextResponse | undefined
   ): ResponseCookies {
+    console.log('wrapping mutable request cookies')
     const responseCookes = new ResponseCookies(new Headers())
     for (const cookie of cookies.getAll()) {
       responseCookes.set(cookie)
@@ -105,6 +108,7 @@ export class MutableRequestCookiesAdapter {
     let modifiedValues: ResponseCookie[] = []
     const modifiedCookies = new Set<string>()
     const updateResponseCookies = () => {
+      console.log('updating response cookies')
       // TODO-APP: change method of getting staticGenerationAsyncStore
       const staticGenerationAsyncStore = (fetch as any)
         .__nextGetStaticStore?.()
@@ -116,6 +120,7 @@ export class MutableRequestCookiesAdapter {
       const allCookies = responseCookes.getAll()
       modifiedValues = allCookies.filter((c) => modifiedCookies.has(c.name))
       if (res) {
+        console.log('detected res so serializing cookies to header')
         const serializedCookies: string[] = []
         for (const cookie of modifiedValues) {
           const tempCookies = new ResponseCookies(new Headers())
