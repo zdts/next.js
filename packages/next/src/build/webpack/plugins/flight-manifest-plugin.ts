@@ -136,8 +136,8 @@ export class ClientReferenceManifestPlugin {
 
     // Collect client requests
     function collectClientRequest(mod: webpack.NormalModule) {
-      if (mod.resource === '' && mod.buildInfo.rsc) {
-        const { requests = [] } = mod.buildInfo.rsc
+      if (mod.resource === '' && mod.buildInfo?.rsc) {
+        const { requests = [] } = mod.buildInfo?.rsc
         requests.forEach((r: string) => {
           clientRequestsSet.add(r)
         })
@@ -265,7 +265,7 @@ export class ClientReferenceManifestPlugin {
                 }
                 return null
               }),
-              ...(mod.buildInfo.rsc?.clientRefs || []),
+              ...(mod.buildInfo?.rsc?.clientRefs || []),
             ]
               .filter(Boolean)
               .flat()
