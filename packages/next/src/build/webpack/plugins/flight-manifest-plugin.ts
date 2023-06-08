@@ -150,7 +150,7 @@ export class ClientReferenceManifestPlugin {
       function getAppPathRequiredChunks() {
         return chunkGroup.chunks
           .map((requiredChunk: webpack.Chunk) => {
-            if (SYSTEM_ENTRYPOINTS.has(requiredChunk.name)) {
+            if (SYSTEM_ENTRYPOINTS.has(requiredChunk.name || '')) {
               return null
             }
 
