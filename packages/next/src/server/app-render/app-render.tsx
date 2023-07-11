@@ -1178,7 +1178,8 @@ export async function renderToHTMLOrFlight(
                   {/* Adding key={requestId} to make metadata remount for each render */}
                   {/* @ts-expect-error allow to use async server component */}
                   <MetadataTree
-                    key={requestId}
+                    // key={requestId}
+                    requestId={requestId}
                     tree={loaderTree}
                     pathname={pathname}
                     searchParams={providedSearchParams}
@@ -1321,7 +1322,8 @@ export async function renderToHTMLOrFlight(
           // Adding key={requestId} to make metadata remount for each render
           // @ts-expect-error allow to use async server component
           <MetadataTree
-            key={requestId}
+            // key={requestId}
+            requestId={requestId}
             tree={tree}
             pathname={pathname}
             searchParams={providedSearchParams}
@@ -1592,7 +1594,8 @@ export async function renderToHTMLOrFlight(
                       <>
                         {/* @ts-expect-error allow to use async server component */}
                         <MetadataTree
-                          key={requestId}
+                          // key={requestId}
+                          requestId={requestId}
                           tree={emptyLoaderTree}
                           pathname={pathname}
                           searchParams={providedSearchParams}
