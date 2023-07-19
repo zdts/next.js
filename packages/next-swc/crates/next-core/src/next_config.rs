@@ -411,6 +411,7 @@ pub struct ExperimentalConfig {
     pub isr_flush_to_disk: Option<bool>,
     mdx_rs: Option<bool>,
     pub swc_plugins: Option<Vec<(String, serde_json::Value)>>,
+    server_actions: Option<bool>,
 
     // unsupported
     optimize_package_imports: Option<Vec<String>>,
@@ -648,6 +649,13 @@ impl NextConfig {
     pub async fn skip_trailing_slash_redirect(self: Vc<Self>) -> Result<Vc<bool>> {
         Ok(Vc::cell(
             self.await?.skip_trailing_slash_redirect.unwrap_or(false),
+        ))
+    }
+
+    #[turbo_tasks::function]
+    pub async fn enable_server_actions(self: Vc<Self>) -> Result<Vc<bool>> {
+        Ok(Vc::cell(
+            self.await?.experimental.server_actions.unwrap_or(false),
         ))
     }
 }

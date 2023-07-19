@@ -33,6 +33,7 @@ next-dev = { path = "packages/next-swc/crates/next-dev", default-features = fals
   "serializable",
 ] }
 next-dev-tests = { path = "packages/next-swc/crates/next-dev-tests" }
+next-swc = { path = "packages/next-swc/crates/core" }
 next-transform-font = { path = "packages/next-swc/crates/next-transform-font" }
 next-transform-dynamic = { path = "packages/next-swc/crates/next-transform-dynamic" }
 next-transform-strip-page-exports = { path = "packages/next-swc/crates/next-transform-strip-page-exports" }

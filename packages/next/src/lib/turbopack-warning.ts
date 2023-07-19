@@ -38,6 +38,7 @@ const supportedTurbopackNextConfigOptions = [
   'experimental.isrFlushToDisk',
   'experimental.workerThreads',
   'experimental.caseSensitiveRoutes',
+  'experimental.serverActions',
 ]
 
 // The following will need to be supported by `next build --turbo`
