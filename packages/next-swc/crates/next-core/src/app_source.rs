@@ -182,7 +182,12 @@ fn next_ssr_client_module_transition(
                 next_config,
                 execution_context,
             ),
-            ssr_environment: get_server_compile_time_info(mode, process_env, server_addr),
+            ssr_environment: get_server_compile_time_info(
+                mode,
+                process_env,
+                server_addr,
+                next_config,
+            ),
         }
         .cell(),
     )
@@ -239,7 +244,8 @@ fn next_server_component_transition(
             ecmascript_client_reference_transition_name,
         ),
     });
-    let rsc_compile_time_info = get_server_compile_time_info(mode, process_env, server_addr);
+    let rsc_compile_time_info =
+        get_server_compile_time_info(mode, process_env, server_addr, next_config);
     let rsc_resolve_options_context =
         get_server_resolve_options_context(project_path, ty, mode, next_config, execution_context);
     let rsc_module_options_context =
@@ -268,7 +274,8 @@ fn next_route_transition(
     let mode = NextMode::DevServer;
     let server_ty = Value::new(ServerContextType::AppRoute { app_dir });
 
-    let server_compile_time_info = get_server_compile_time_info(mode, process_env, server_addr);
+    let server_compile_time_info =
+        get_server_compile_time_info(mode, process_env, server_addr, next_config);
 
     let server_resolve_options_context = get_server_resolve_options_context(
         project_path,
@@ -557,7 +564,7 @@ fn app_context(
     let ssr_ty = Value::new(ServerContextType::AppSSR { app_dir });
     ModuleAssetContext::new(
         Vc::cell(transitions),
-        get_server_compile_time_info(mode, env, server_addr),
+        get_server_compile_time_info(mode, env, server_addr, next_config),
         get_server_module_options_context(
             project_path,
             execution_context,

@@ -174,7 +174,8 @@ pub async fn create_page_source(
         .cell(),
     );
 
-    let server_compile_time_info = get_server_compile_time_info(mode, env, server_addr);
+    let server_compile_time_info =
+        get_server_compile_time_info(mode, env, server_addr, next_config);
     let server_resolve_options_context = get_server_resolve_options_context(
         project_root,
         server_ty,
