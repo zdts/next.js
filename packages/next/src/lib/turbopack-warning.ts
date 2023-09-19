@@ -23,15 +23,23 @@ const supportedTurbopackNextConfigOptions = [
   'trailingSlash',
   'i18n.locales',
   'i18n.defaultLocale',
-  'sassOptions.includePaths',
+  'sassOptions',
+  'configOrigin',
+  'httpAgentOptions',
+  'useFileSystemPublicRoutes',
+  'generateEtags',
+  'assetPrefix',
   'experimental.serverComponentsExternalPackages',
   'experimental.turbo',
   'experimental.mdxRs',
   'experimental.forceSwcTransforms',
+  'experimental.serverActionsBodySizeLimit',
+  'experimental.memoryBasedWorkersCount',
   // options below are not really supported, but ignored
   'webpack',
   'devIndicators',
   'onDemandEntries',
+  'excludeDefaultMomentLocales',
   'experimental.cpus',
   'experimental.sharedPool',
   'experimental.proxyTimeout',
@@ -39,6 +47,8 @@ const supportedTurbopackNextConfigOptions = [
   'experimental.workerThreads',
   'experimental.caseSensitiveRoutes',
   'experimental.serverActions',
+  'experimental.optimizePackageImports',
+  'experimental.optimizeServerReact',
 ]
 
 // The following will need to be supported by `next build --turbo`
@@ -55,6 +65,8 @@ const prodSpecificTurboNextConfigOptions = [
   'optimizeFonts',
   'poweredByHeader',
   'staticPageGenerationTimeout',
+  'reactProductionProfiling',
+  'cleanDistDir',
   'compiler.reactRemoveProperties',
   'compiler.removeConsole',
   'experimental.turbotrace',
@@ -63,6 +75,12 @@ const prodSpecificTurboNextConfigOptions = [
   'experimental.outputFileTracingIgnores',
   'experiemental.outputFileTracingIncludes',
   'experimental.gzipSize',
+  'experimental.useDeploymentId',
+  'experimental.useDeploymentIdServerActions',
+  'experimental.deploymentId',
+  'experimental.serverMinification',
+  'experimental.serverSourceMaps',
+  'experimenta.trustHostHeader',
 ]
 
 // check for babelrc, swc plugins
