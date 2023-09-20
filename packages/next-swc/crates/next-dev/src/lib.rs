@@ -364,13 +364,18 @@ async fn source(
         browserslist_query.clone(),
         next_config,
     );
-    let client_compile_time_info = get_client_compile_time_info(mode, browserslist_query);
+
+    let app_dir = find_app_dir_if_enabled(project_path);
+
+    let client_compile_time_info =
+        get_client_compile_time_info(mode, browserslist_query, next_config, app_dir);
     let client_chunking_context = get_client_chunking_context(
         project_path,
         dev_server_root,
         client_compile_time_info.environment(),
         mode,
     );
+
     let pages_structure =
         find_pages_structure(project_path, dev_server_root, next_config.page_extensions());
     let page_source = create_page_source(
@@ -385,7 +390,7 @@ async fn source(
         next_config,
         server_addr,
     );
-    let app_dir = find_app_dir_if_enabled(project_path);
+
     let app_source = create_app_source(
         app_dir,
         project_path,

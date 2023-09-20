@@ -309,8 +309,15 @@ impl Project {
     }
 
     #[turbo_tasks::function]
-    pub(super) fn client_compile_time_info(&self) -> Vc<CompileTimeInfo> {
-        get_client_compile_time_info(self.mode, self.browserslist_query.clone())
+    pub(super) async fn client_compile_time_info(self: Vc<Self>) -> Result<Vc<CompileTimeInfo>> {
+        let this = self.await?;
+
+        Ok(get_client_compile_time_info(
+            this.mode,
+            this.browserslist_query.clone(),
+            this.next_config,
+            find_app_dir(self.project_path()),
+        ))
     }
 
     #[turbo_tasks::function]
