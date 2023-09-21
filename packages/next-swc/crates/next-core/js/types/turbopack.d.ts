@@ -15,5 +15,6 @@ export type RenderData = {
     allowedRevalidateHeaderKeys?: string[]
     fetchCacheKeyPrefix?: string
     isrMemoryCacheSize?: number
+    useUnstablePostpone: boolean
   }
 }

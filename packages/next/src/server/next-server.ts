@@ -452,7 +452,8 @@ export default class NextNodeServer extends BaseServer {
     res: NodeNextResponse,
     pathname: string,
     query: NextParsedUrlQuery,
-    renderOpts: import('./render').RenderOpts
+    renderOpts: import('./render').RenderOpts &
+      import('./app-render/types').RenderOptsPartial
   ): Promise<RenderResult> {
     return getTracer().trace(NextNodeServerSpan.renderHTML, async () =>
       this.renderHTMLImpl(req, res, pathname, query, renderOpts)
@@ -464,7 +465,8 @@ export default class NextNodeServer extends BaseServer {
     res: NodeNextResponse,
     pathname: string,
     query: NextParsedUrlQuery,
-    renderOpts: import('./render').RenderOpts
+    renderOpts: import('./render').RenderOpts &
+      import('./app-render/types').RenderOptsPartial
   ): Promise<RenderResult> {
     if (process.env.NEXT_MINIMAL) {
       throw new Error(

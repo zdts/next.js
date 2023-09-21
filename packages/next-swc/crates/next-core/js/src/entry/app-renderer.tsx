@@ -133,6 +133,7 @@ async function runOperation(renderData: RenderData) {
     pageConfig: {},
     reactLoadableManifest: {},
     nextConfigOutput: renderData.data?.nextConfigOutput,
+    useUnstablePostpone: renderData.data?.useUnstablePostpone ?? false,
   }
   const result = await renderToHTMLOrFlight(
     req,

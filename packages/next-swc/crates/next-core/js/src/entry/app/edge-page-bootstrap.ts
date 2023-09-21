@@ -57,6 +57,8 @@ async function render(request: NextRequest, event: NextFetchEvent) {
     reactLoadableManifest: {},
     // TODO nextConfigOutput
     nextConfigOutput: undefined,
+    // TODO: useUnstablePostpone
+    useUnstablePostpone: false,
   }
 
   const tranform = new TransformStream()

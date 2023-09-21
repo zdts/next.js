@@ -1978,7 +1978,8 @@ export default abstract class Server<ServerOptions extends Options = Options> {
         query: origQuery,
       })
 
-      const renderOpts: RenderOpts = {
+      const renderOpts: RenderOpts &
+        import('./app-render/types').RenderOptsPartial = {
         ...components,
         ...opts,
         ...(isAppPath
@@ -2012,6 +2013,7 @@ export default abstract class Server<ServerOptions extends Options = Options> {
         isOnDemandRevalidate,
         isDraftMode: isPreviewMode,
         isServerAction,
+        useUnstablePostpone: this.nextConfig.experimental.ppr === true,
       }
 
       // Legacy render methods will return a render result that needs to be
@@ -2024,11 +2026,12 @@ export default abstract class Server<ServerOptions extends Options = Options> {
         const context: AppRouteRouteHandlerContext = {
           params: opts.params,
           prerenderManifest: this.getPrerenderManifest(),
-          staticGenerationContext: {
+          renderOpts: {
             originalPathname: components.ComponentMod.originalPathname,
             supportsDynamicHTML,
             incrementalCache,
             isRevalidate: isSSG,
+            useUnstablePostpone: false,
           },
         }
 
@@ -2040,11 +2043,9 @@ export default abstract class Server<ServerOptions extends Options = Options> {
 
           const response = await routeModule.handle(request, context)
 
-          ;(req as any).fetchMetrics = (
-            context.staticGenerationContext as any
-          ).fetchMetrics
+          ;(req as any).fetchMetrics = (context.renderOpts as any).fetchMetrics
 
-          const cacheTags = (context.staticGenerationContext as any).fetchTags
+          const cacheTags = (context.renderOpts as any).fetchTags
 
           // If the request is for a static response, we can cache it so long
           // as it's not edge.
@@ -2062,8 +2063,7 @@ export default abstract class Server<ServerOptions extends Options = Options> {
               headers['content-type'] = blob.type
             }
 
-            const revalidate =
-              context.staticGenerationContext.store?.revalidate ?? false
+            const revalidate = context.renderOpts.store?.revalidate ?? false
 
             // Create the cache entry for the response.
             const cacheEntry: ResponseCacheEntry = {

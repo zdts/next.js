@@ -452,6 +452,7 @@ export default async function exportApp(
     // Start the rendering process
     const renderOpts: WorkerRenderOptsPartial = {
       previewProps: prerenderManifest?.preview,
+      useUnstablePostpone: nextConfig.experimental.ppr === true,
       buildId,
       nextExport: true,
       assetPrefix: nextConfig.assetPrefix.replace(/\/$/, ''),

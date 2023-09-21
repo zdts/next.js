@@ -51,7 +51,8 @@ export async function exportAppRoute(
       },
       notFoundRoutes: [],
     },
-    staticGenerationContext: {
+    renderOpts: {
+      useUnstablePostpone: false,
       originalPathname: page,
       nextExport: true,
       supportsDynamicHTML: false,
@@ -60,7 +61,7 @@ export async function exportAppRoute(
   }
 
   if (hasNextSupport) {
-    context.staticGenerationContext.isRevalidate = true
+    context.renderOpts.isRevalidate = true
   }
 
   // This is a route handler, which means it has it's handler in the
@@ -78,11 +79,10 @@ export async function exportAppRoute(
     }
 
     const blob = await response.blob()
-    const revalidate =
-      context.staticGenerationContext.store?.revalidate || false
+    const revalidate = context.renderOpts.store?.revalidate || false
 
     const headers = toNodeOutgoingHttpHeaders(response.headers)
-    const cacheTags = (context.staticGenerationContext as any).fetchTags
+    const cacheTags = (context.renderOpts as any).fetchTags
 
     if (cacheTags) {
       headers[NEXT_CACHE_TAGS_HEADER] = cacheTags

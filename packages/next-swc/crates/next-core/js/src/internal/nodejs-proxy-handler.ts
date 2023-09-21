@@ -42,7 +42,8 @@ export default (routeModule: AppRouteRouteModule) => {
           previewModeId: 'development-id',
         } as any,
       },
-      staticGenerationContext: {
+      renderOpts: {
+        useUnstablePostpone: false,
         supportsDynamicHTML: true,
       },
     }

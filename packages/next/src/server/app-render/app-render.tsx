@@ -1543,15 +1543,30 @@ export const renderToHTMLOrFlight: AppPageRender = (
           return flushed
         }
 
+        // FIXME: (wyattjoh) remove this
+        function report(label: string, reason: any) {
+          console.log(`REACT[${pagePath}]:${label} ${reason}`)
+        }
+
         try {
           const renderStream = await renderToInitialStream({
             ReactDOMServer: require('react-dom/server.edge'),
             element: content,
             streamOptions: {
-              onError: htmlRendererErrorHandler,
+              // onError: htmlRendererErrorHandler,
               nonce,
               // Include hydration scripts in the HTML
               bootstrapScripts: [bootstrapScript],
+              onPostpone(reason: any) {
+                report('POSTPONE', reason)
+              },
+              onError(error: Error) {
+                report('ERROR', error.message)
+                return htmlRendererErrorHandler(error)
+              },
+              onShellError(error: Error) {
+                report('SHELL_ERROR', error.message)
+              },
             },
           })
 

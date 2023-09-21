@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { DynamicServerError } from './hooks-server-context'
 import { staticGenerationAsyncStorage } from './static-generation-async-storage.external'
 
@@ -34,6 +36,16 @@ export const staticGenerationBailout: StaticGenerationBailout = (
     throw new StaticGenBailoutError(
       formatErrorMessage(reason, { ...opts, dynamic: opts?.dynamic ?? 'error' })
     )
+  }
+
+  // If we're statically generating and we're using unstable_postpone, we should
+  // call it now.
+  // FIXME: (wyattjoh) review this such that resumption is possible
+  if (
+    staticGenerationStore?.isStaticGeneration &&
+    staticGenerationStore?.useUnstablePostpone
+  ) {
+    ;(React as any).unstable_postpone(reason)
   }
 
   if (staticGenerationStore) {

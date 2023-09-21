@@ -220,6 +220,7 @@ export default class NextWebServer extends BaseServer<WebServerOptions> {
       pathname,
       query,
       Object.assign(renderOpts, {
+        useUnstablePostpone: this.nextConfig.experimental.ppr === true,
         disableOptimizedLoading: true,
         runtime: 'experimental-edge',
       })
